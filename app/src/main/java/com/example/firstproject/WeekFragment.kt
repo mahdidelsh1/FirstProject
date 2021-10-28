@@ -8,9 +8,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import java.time.LocalDateTime
 
 private const val Tag = "Test"
 
@@ -18,8 +21,7 @@ class WeekFragment : Fragment() {
 
     private lateinit var weekRecyclerView : RecyclerView
     private lateinit var addBTN : FloatingActionButton
-
-
+    private lateinit var weeksList: MutableList<Week>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,11 +39,11 @@ class WeekFragment : Fragment() {
             Week(3),
             Week(4),
             Week(5),
-
-
             )
 
-        var myAdapter  : WeekAdapter = WeekAdapter(myList)
+        weeksList = myList
+
+        var myAdapter  : WeekAdapter = WeekAdapter(weeksList)
         weekRecyclerView.adapter = myAdapter
         Log.d(Tag , "1 : $weekRecyclerView")
 
@@ -49,18 +51,41 @@ class WeekFragment : Fragment() {
         addBTN = view.findViewById(R.id.Add)
         addBTN.setOnClickListener {
 
-            val weekNumber = myList[myList.lastIndex].WeekNumber + 1
+            val weekNumber  : Int = try {
+                myList[myList.lastIndex].WeekNumber + 1
+
+            }catch (e : Exception){
+                1
+            }
+
             val newWeek : Week = Week(weekNumber)
             myList.add(newWeek)
             //tell da adapter new item inserted and where it inserted
             myAdapter.notifyItemInserted(myList.size)
 
         }
+
+        val swipeToDeleteCallback = object : SwipeToDeleteCallback() {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.bindingAdapterPosition
+
+                Toast.makeText(view.context , "${weeksList[pos].WeekNumber} is Deleted" , Toast.LENGTH_SHORT).show()
+
+                weeksList.removeAt(pos)
+                myAdapter.notifyItemRemoved(pos)
+            }
+        }
+
+        val itemTouchHelper = ItemTouchHelper(swipeToDeleteCallback)
+        itemTouchHelper.attachToRecyclerView(weekRecyclerView)
+
         return view
     }
 
 
     inner class WeekAdapter(var weeks  : MutableList<Week>) : RecyclerView.Adapter<WeekViewHolder>(){
+
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeekViewHolder {
             Log.d(Tag , "2")
 
@@ -70,7 +95,6 @@ class WeekFragment : Fragment() {
 
         override fun onBindViewHolder(holder: WeekViewHolder, position: Int) {
             Log.d(Tag , "3")
-
             val week : Week = weeks[position]
             holder.bind(week)
 
@@ -79,25 +103,35 @@ class WeekFragment : Fragment() {
         override fun getItemCount() = weeks.size
 
 
-
-
-
     }
+
 
     inner class WeekViewHolder(view : View) : RecyclerView.ViewHolder(view){
 
         val weekTV : TextView = view.findViewById(R.id.weekTV)
         val dateTV : TextView = view.findViewById(R.id.dateTV)
+        lateinit var week1 : Week
 
 
         fun bind(week: Week) {
+            week1 = week
             Log.d(Tag , "4")
             val weekText : String ="  هفته ی  " +  week.WeekNumber.toString()
             weekTV.text = weekText
-            dateTV.text = week.date.toString()
+
+            dateTV.text = "${week.realDate}"
+            Log.d(Tag , "${week1.realDate}")
+
+        }
+
+        init {
+            itemView.setOnClickListener {
+                Toast.makeText(view.context , "${week1.WeekNumber } week selected" , Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
+
 
 
 }
