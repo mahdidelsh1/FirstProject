@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FirstProject/app/src/main/res/layout/day_item.xml" value="0.4466666666666667" />
+        <entry key="..\:/FirstProject/app/src/main/res/layout/fragment_day.xml" value="0.22" />
+        <entry key="..\:/FirstProject/app/src/main/res/layout/fragment_week.xml" value="0.13055555555555556" />
         <entry key="..\:/FirstProject/app/src/main/res/layout/week_item.xml" value="0.5" />
       </map>
     </option>

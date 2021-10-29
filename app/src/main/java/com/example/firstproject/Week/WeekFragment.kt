@@ -1,4 +1,4 @@
-package com.example.firstproject
+package com.example.firstproject.Week
 
 import android.os.Bundle
 import android.util.Log
@@ -12,9 +12,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.firstproject.R
+import com.example.firstproject.SwipeToDeleteCallback
+import com.example.firstproject.Week.Week
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
-import java.time.LocalDateTime
 
 private const val Tag = "Test"
 
@@ -34,7 +35,8 @@ class WeekFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_week,container,false)
         //recycler view :
-        weekRecyclerView = view.findViewById(R.id.recyclerView) as RecyclerView
+        weekRecyclerView = view.findViewById(
+            R.id.recyclerView) as RecyclerView
         weekRecyclerView.layoutManager = LinearLayoutManager(context)
 
 
