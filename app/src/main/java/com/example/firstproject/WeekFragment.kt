@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,10 @@ class WeekFragment : Fragment() {
 
     private lateinit var weekRecyclerView : RecyclerView
     private lateinit var addBTN : FloatingActionButton
-    private lateinit var weeksList: MutableList<Week>
+
+    val weekViewModel : WeekViewModel by lazy {
+        ViewModelProvider(this)[WeekViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,17 +37,10 @@ class WeekFragment : Fragment() {
         weekRecyclerView = view.findViewById(R.id.recyclerView) as RecyclerView
         weekRecyclerView.layoutManager = LinearLayoutManager(context)
 
-        var myList = mutableListOf(
-            Week(1),
-            Week(2),
-            Week(3),
-            Week(4),
-            Week(5),
-            )
 
-        weeksList = myList
 
-        var myAdapter  : WeekAdapter = WeekAdapter(weeksList)
+
+        var myAdapter  : WeekAdapter = WeekAdapter(weekViewModel.myList)
         weekRecyclerView.adapter = myAdapter
         Log.d(Tag , "1 : $weekRecyclerView")
 
@@ -52,16 +49,16 @@ class WeekFragment : Fragment() {
         addBTN.setOnClickListener {
 
             val weekNumber  : Int = try {
-                myList[myList.lastIndex].WeekNumber + 1
+                weekViewModel.myList[weekViewModel.myList.lastIndex].WeekNumber + 1
 
             }catch (e : Exception){
                 1
             }
 
             val newWeek : Week = Week(weekNumber)
-            myList.add(newWeek)
+            weekViewModel.myList.add(newWeek)
             //tell da adapter new item inserted and where it inserted
-            myAdapter.notifyItemInserted(myList.size)
+            myAdapter.notifyItemInserted(weekViewModel.myList.size)
 
         }
 
@@ -69,9 +66,9 @@ class WeekFragment : Fragment() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.bindingAdapterPosition
 
-                Toast.makeText(view.context , "${weeksList[pos].WeekNumber} is Deleted" , Toast.LENGTH_SHORT).show()
+                Toast.makeText(view.context , "${weekViewModel.myList[pos].WeekNumber} is Deleted" , Toast.LENGTH_SHORT).show()
 
-                weeksList.removeAt(pos)
+                weekViewModel.myList.removeAt(pos)
                 myAdapter.notifyItemRemoved(pos)
             }
         }
